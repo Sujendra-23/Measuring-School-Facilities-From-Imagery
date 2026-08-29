@@ -1,0 +1,10 @@
+.rocketride/
+.claude/
+.github/
+.env
+output/images/
+optional/images/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
