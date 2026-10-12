@@ -32,6 +32,14 @@ OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.4")
 # validation role. Still same-vendor, not cross-provider; the memo says so.
 SECOND_OPINION_MODEL = os.environ.get("SECOND_OPINION_MODEL", "gpt-4o")
 
+# Cross-vendor second opinion for validation/second_opinion_claude.py: Claude
+# vision through the Anthropic API, same prompt and schema as the primary call.
+# Unlike the gpt-4o check above, this one is a different vendor, so it is less
+# likely to share the primary model's blind spots. Optional: nothing else in the
+# pipeline needs an Anthropic key, and the script refuses to run without one.
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5-5")
+
 # --- Imagery source: USGS NAIP, served through Esri's ArcGIS ImageServer REST API ---
 # Public federal aerial imagery, no API key required. Covers the continental US
 # at ~0.6m/pixel and re-flies every state every 2-3 years, which is why we also

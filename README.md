@@ -86,6 +86,41 @@ weaker independence guarantee than a cross-vendor check would be —
 same-provider models can share correlated blind spots — and the memo says
 so plainly rather than overselling it.
 
+## Independent evaluation (hand labels, not yet done)
+
+**There are no hand-labeled facility results in this repo.** Everything above is either a
+location check done by a person (`manual_spotcheck.md`) or one model compared with another
+(`second_opinion.py`). No person has labeled the solar, portables, fence, track, field, court
+or pool attributes for these 25 schools, so this repo makes no claim about how accurate those
+measurements are. The tooling below exists so that claim can be made once the labels do.
+
+1. **Label.** `validation/labels_template.csv` has one row per school x attribute (175 rows) with
+   the school id, name and cached image path (`output/images/{school_id}.png`, gitignored, so
+   run `src/pipeline.py` first or point at your own copy) prefilled and the `label` column empty.
+   It deliberately contains no model output, so you are not anchored on it. Copy it to
+   `validation/labels.csv`, fill in `label` (allowed values are in the `allowed_values` column;
+   write `unsure` to skip a row), and look at the campus independently rather than only at the
+   cached crop if you can.
+   `python validation/make_labels_template.py` regenerates the blank sheet.
+2. **Score.** `python validation/evaluate_labels.py` joins your labels to `output/measurements.csv`
+   and reports per-field accuracy; precision, recall and F1 for solar, track and pool; exact-match,
+   within-one and mean absolute error for the three count fields; confusion tables for portables
+   and fence; and a confidence calibration table (mean stated confidence vs actual accuracy by
+   bin, plus expected calibration error). With 25 schools each bin is a handful of rows, so read
+   calibration as a direction, not a measurement. Add `--out validation/evaluation_report.md` to save
+   the report. Without a `labels.csv` it exits and says there is nothing to evaluate.
+3. **Cross-vendor second opinion (optional, not run).** `python validation/second_opinion_claude.py`
+   sends the same images and prompt to Claude through the Anthropic API, writes
+   `validation/second_opinion_claude.csv`, and prints per-field agreement with the OpenAI results
+   (`--dry-run` lists what would be sent, `--limit N` tries a few first, `--report-only` re-prints
+   from the CSV). It needs `ANTHROPIC_API_KEY` and refuses to run without one; it makes one call per
+   school (about 25), so the cost is small but not zero. **It has not been run: no Anthropic key was
+   available when it was written, so `second_opinion_claude.csv` does not exist and no Claude
+   agreement figure exists.** Agreement between two models is not accuracy; only step 2 measures that.
+
+The scorer is tested (`python -m pytest`) on a four-school invented fixture whose expected numbers were
+computed by hand; those tests check the arithmetic, not the pipeline's quality.
+
 ## Optional part: tracking one measure over time
 
 The brief's optional extra: pick one measure, show how it changes across
