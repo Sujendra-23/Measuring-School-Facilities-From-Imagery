@@ -1,0 +1,355 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -85.4958992,
+     33.3131579
+    ]
+   },
+   "properties": {
+    "school_id": "010282001124",
+    "name": "Wedowee Middle School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -114.63639187567568,
+     32.67162861351351
+    ]
+   },
+   "properties": {
+    "school_id": "040963000996",
+    "name": "Kofa High School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -118.41126630294116,
+     34.061735732352936
+    ]
+   },
+   "properties": {
+    "school_id": "060483000471",
+    "name": "Beverly Hills High"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.37229274285714,
+     36.82912305714286
+    ]
+   },
+   "properties": {
+    "school_id": "061734009378",
+    "name": "Cerra Vista Elementary"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.91943948,
+     37.71135048666667
+    ]
+   },
+   "properties": {
+    "school_id": "060001909278",
+    "name": "Wells Middle"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -82.4915184,
+     33.7965141
+    ]
+   },
+   "properties": {
+    "school_id": "130333001308",
+    "name": "Lincoln County Elementary School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.47383958333332,
+     42.898393255555554
+    ]
+   },
+   "properties": {
+    "school_id": "160264000465",
+    "name": "CLAUDE A WILCOX ELEMENTARY SCHOOL"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.91574130666666,
+     48.19038558
+    ]
+   },
+   "properties": {
+    "school_id": "160000100084",
+    "name": "PRIEST RIVER LAMANNA HIGH"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -86.27264962,
+     39.960301792
+    ]
+   },
+   "properties": {
+    "school_id": "180283000341",
+    "name": "Zionsville Community High School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -76.34692951730769,
+     39.52924203653846
+    ]
+   },
+   "properties": {
+    "school_id": "240039000683",
+    "name": "Bel Air High"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -83.986698735,
+     43.43242576
+    ]
+   },
+   "properties": {
+    "school_id": "263039006679",
+    "name": "Thompson Middle School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -95.0620822,
+     46.2636935
+    ]
+   },
+   "properties": {
+    "school_id": "270543000204",
+    "name": "Bertha Secondary"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -71.5438207,
+     43.18943945714285
+    ]
+   },
+   "properties": {
+    "school_id": "330246000063",
+    "name": "Rundlett Middle School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -74.0367933,
+     40.1543126
+    ]
+   },
+   "properties": {
+    "school_id": "341560004108",
+    "name": "Spring Lake Heights Elementary School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -73.85069711999999,
+     40.87846894
+    ]
+   },
+   "properties": {
+    "school_id": "360008802312",
+    "name": "PS 78 ANNE HUTCHINSON"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -83.1818543,
+     39.4053413
+    ]
+   },
+   "properties": {
+    "school_id": "390494903613",
+    "name": "Adena Elementary School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.7638603,
+     41.8740217
+    ]
+   },
+   "properties": {
+    "school_id": "390458502363",
+    "name": "Ridgeview Elementary School"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -97.5219126,
+     35.47476226
+    ]
+   },
+   "properties": {
+    "school_id": "402277001928",
+    "name": "EMERSON ALTERNATIVE ED. (HS)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -95.37362171333334,
+     35.70954779333333
+    ]
+   },
+   "properties": {
+    "school_id": "401452000682",
+    "name": "HILLDALE LOWER ES"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.0181,
+     40.4186
+    ]
+   },
+   "properties": {
+    "school_id": "421917006915",
+    "name": "Pittsburgh Brashear HS"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -75.47214446285714,
+     40.91271564
+    ]
+   },
+   "properties": {
+    "school_id": "421929000163",
+    "name": "Pleasant Valley El Sch"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.02282593636363,
+     35.00348880909091
+    ]
+   },
+   "properties": {
+    "school_id": "450387001491",
+    "name": "India Hook Elementary"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -99.4253418,
+     31.8120906
+    ]
+   },
+   "properties": {
+    "school_id": "481455000943",
+    "name": "COLEMAN H S"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -96.74891552,
+     32.774699399999996
+    ]
+   },
+   "properties": {
+    "school_id": "481623001325",
+    "name": "PAUL L DUNBAR LEARNING CENTER"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -88.94721392857143,
+     42.78143322857143
+    ]
+   },
+   "properties": {
+    "school_id": "550957000382",
+    "name": "Northside Intermediate"
+   }
+  }
+ ]
+}
