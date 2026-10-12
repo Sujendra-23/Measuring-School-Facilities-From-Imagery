@@ -123,6 +123,119 @@ missed the specific building with its solar array — confirmed true positive
 in the main pipeline and by direct screenshot, read as a false negative
 here. Named plainly rather than quietly re-scoped away.
 
+## Spatial index, terrain, and routing (added after the take-home)
+
+Three modules that sit beside the facility pipeline and do not touch it:
+`output/measurements.csv` is only ever read. Tests run offline (`python -m pytest`)
+on small synthetic fixtures; nothing in `tests/` calls a live API.
+
+### Spatial index (`src/spatial_index.py`)
+
+Campus footprints and facilities as GeoJSON, indexed with a Shapely `STRtree`.
+`CampusIndex` answers `schools_within(lat, lon, radius_km)`, `nearest_school(lat, lon)`,
+`facilities_in_campus(school_id)` and `campus_containing(lat, lon)`. The tree works
+on raw lon/lat envelopes, so it only picks candidates; each one is then re-checked
+with a distance in meters in a local flat frame centered on the query point, which
+keeps results exact at any latitude. (A test comparing against a linear scan caught
+exactly this kind of mismatch during development: a candidate box using a slightly
+different meters-per-degree constant than the metric dropped a campus at 14 km.)
+
+```bash
+python src/spatial_index.py                 # writes data/schools_points.geojson, prints sample queries
+python benchmarks/bench_spatial_index.py    # index vs linear scan
+```
+
+Benchmark (synthetic random 100-800 m square campuses over the continental US,
+25 km radius, mean per query, Python 3.13 on one laptop, one run; the script also
+asserts index and scan return identical results on every query):
+
+| N campuses | within: Python scan | within: numpy bbox scan | within: index | nearest: Python scan | nearest: index |
+|---|---|---|---|---|---|
+| 1,000 | 6.34 ms | 0.012 ms | 0.015 ms | 6.31 ms | 0.042 ms |
+| 10,000 | 64.2 ms | 0.079 ms | 0.057 ms | 63.5 ms | 0.062 ms |
+| 50,000 | 312 ms | 0.244 ms | 0.162 ms | 309 ms | 0.075 ms |
+
+Read this honestly: the big speedups (400-4000x) are against a deliberately naive
+baseline that does an exact distance per geometry in a Python loop. Against a
+vectorized numpy bounding-box prefilter, which is the fairer comparison, the index
+is roughly even at 1,000 campuses (0.8x) and about 1.4-1.5x faster at 10-50k. The
+index's real advantage is that its cost barely grows with N.
+
+Limitations: the only real campus data in the repo is the 25 resolved points in
+`measurements.csv`; the pipeline does not persist campus polygons or facility
+locations (the vision model returns counts, not coordinates), so polygon and
+"facility inside campus" queries were exercised only on synthetic fixtures and
+random data, never on real footprints. Distances use a local flat-earth frame, fine at
+the tens-of-kilometers scale here, not for continental distances.
+
+### Composite DEM (`src/terrain.py`)
+
+Fetches USGS 3DEP bare-earth elevation per campus through the same Esri ImageServer
+REST pattern as NAIP (`exportImage`, float32 GeoTIFF, decoded with Pillow, so no
+rasterio/GDAL dependency). Each campus extent is split into small tiles
+(`DEM_MAX_TILE_PIXELS`, 32 px at 10 m), fetched separately, and mosaicked back
+into one array, with a one-pixel overlap between neighbors that is averaged. Slope
+comes from central differences on the composite. Output goes to a new file,
+`output/terrain.csv`: min/max/range/mean elevation, mean and max slope, plus tile
+count and no-data fraction.
+
+```bash
+python src/terrain.py
+```
+
+**Ran live:** all 25 campuses fetched successfully (4 tiles each, 0% no-data, about
+48 s total). Elevation range across a campus extent runs from 2.2 m (Thompson
+Middle) to 89.8 m (Pittsburgh Brashear HS, also the steepest at 14.0 degrees mean slope).
+
+Limitations: the extent is the same default 500 m square the imagery step uses when
+no campus polygon is known (not the real campus boundary), at an effective 10 m
+pixel (50x50 px), so the "mean slope" is a coarse figure that smooths out
+building pads, retaining walls and berms, and the max slope is a single-pixel extreme that I did not inspect
+(Beverly Hills reports a 43 degree max on a 2.9 degree mean, which could be real terrain or a data artifact).
+Small tiles are used on purpose so mosaicking is exercised on every campus, even though
+one request would have covered each. Elevation is bare-earth, with no buildings or vegetation.
+
+### Terrain-aware routing (`src/routing.py`)
+
+Grid A* (`heapq`, 8-connected) over a cost raster derived from DEM slope. Each cell
+gets a time rate (speed decays exponentially with slope, impassable above 25 degrees)
+and a risk rate (`(slope / 25)^2`); the cost of a move is a weighted sum of time and
+risk, `w_time * time + w_risk * risk`. The heuristic is octile distance times
+`w_time` times the cheapest time-per-meter on the grid, which is admissible and
+consistent. `compare_weightings` routes under several weightings and flags routes
+that are Pareto-dominated on (time, risk).
+
+```bash
+python src/routing.py [school_id]    # live DEM, SW corner to NE corner, three weightings
+```
+
+Tests use known-answer grids: a flat grid (diagonal and straight-line distance), a
+wall with one gap (hand-computed detour length), a gentle hump where the time-optimal
+route crosses it and the risk-averse route goes around (expected time, risk and distance
+worked out by hand), unreachable goals, the slope cutoff, and 40 random terrains where A*
+cost must equal plain Dijkstra's. Live example (SW to NE corner of a 50x50, 10 m DEM,
+one run, weights `w_time:w_risk`):
+
+| Campus | Weights | Distance | Time | Risk | Max slope |
+|---|---|---|---|---|---|
+| Wedowee Middle | 1:0 | 727 m | 721 s | 28.0 | 13.0 deg |
+| | 1:50 | 828 m | 768 s | 19.4 | 10.1 deg |
+| | 0:1 | 914 m | 827 s | 19.0 | 10.1 deg |
+| Pittsburgh Brashear | 1:0 | 954 m | 1575 s | 162.5 | 24.6 deg |
+| | 1:50 | 1044 m | 1621 s | 154.8 | 24.6 deg |
+| | 0:1 | 1072 m | 1644 s | 154.5 | 24.6 deg |
+
+None of those routes is dominated: each step trades a little more time for a little
+less risk. At Pittsburgh the trade is small because the steep terrain leaves
+little room to avoid steep cells.
+
+Limitations: the speed and risk functions are illustrative and not calibrated to
+any real vehicle, drone or walking speed; the cost raster is per cell, so uphill
+and downhill cost the same; it ignores buildings, fences and land cover (the live
+routes cut across whatever the DEM says is passable, which on a real campus includes
+buildings); diagonal moves may cut corners between blocked cells; and the live runs
+use the 10 m DEM over a 500 m extent, which is a toy scale for path planning.
+
 ## Output schema (`output/measurements.csv`)
 
 | Column | Meaning |

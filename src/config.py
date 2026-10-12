@@ -74,3 +74,14 @@ OVERPASS_DELAY_SECONDS = 1.0
 # vision_extract.py still backs off properly (honoring Retry-After) if a
 # 429 does show up, so this is just politeness, not load-bearing.
 OPENAI_DELAY_SECONDS = 1.0
+
+# --- Elevation: USGS 3DEP, same Esri ImageServer REST pattern as NAIP above ---
+# Bare-earth DEM, free and keyless. exportImage can return a float32 GeoTIFF
+# (pixelType=F32) of elevation in meters, which Pillow reads as mode "F".
+DEM_IMAGE_SERVER = "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer"
+DEM_RESOLUTION_M = 10  # target pixel size; 3DEP serves 1/3 arc-second (~10m) nationwide
+# Per-request tile edge in pixels. Deliberately small: a default 500m campus is
+# only ~50 px at 10m, so 32 px tiles split it 2x2 and the mosaic step is
+# actually exercised on every campus, not just on unusually large ones.
+DEM_MAX_TILE_PIXELS = 32
+TERRAIN_CSV = "output/terrain.csv"
